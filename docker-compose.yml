@@ -1,0 +1,28 @@
+#version: "3.8"
+x-base_service: &base_service
+    ports:
+      - "${WEBUI_PORT:-8188}:8188"
+      - "${WEBUI_PORT:-8000}:8000"
+      - "${WEBUI_PORT:-8888}:8888"
+    volumes:
+      - ./data/comfyui/output:/comfyui/output
+      - ./data/runpod-volume:/runpod-volume
+    stop_signal: SIGKILL
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+              - driver: nvidia
+                device_ids: ['0']
+                capabilities: [compute, utility]
+name: runpod-worker-comfy
+services:
+  runpod-worker-comfy: &runpod-worker-comfy
+    <<: *base_service
+    profiles: ["runpod-worker-comfy"]
+    build: ./
+    image: johnliam/runpod-worker-comfy:cemleme
+    environment:      
+      - NVIDIA_VISIBLE_DEVICES=all
+      - SERVE_API_LOCALLY=true      
