@@ -8,6 +8,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PIP_PREFER_BINARY=1
 # Ensures output from python is printed immediately to the terminal without buffering
 ENV PYTHONUNBUFFERED=1 
+ENV GIT_CUSTOM_NODES="https://raw.githubusercontent.com/johnliam68/cemleme/refs/heads/main/src/custom-nodes.txt"
+ENV GIT_MODELS="" 
 
 RUN apt-get update && apt-get install -y git && apt-get clean && apt-get install git-lfs && git lfs install
 
@@ -38,24 +40,6 @@ RUN --mount=type=cache,target=/root/.cache/pip \
   # git reset --hard 276f8fce9f5a80b500947fb5745a4dde9e84622d && \
   pip install -r requirements.txt
 
-RUN cd ${ROOT}/custom_nodes && git clone https://github.com/ltdrdata/ComfyUI-Manager
-RUN pip install -r ${ROOT}/custom_nodes/ComfyUI-Manager/requirements.txt
-
-RUN cd ${ROOT}/custom_nodes && \
-git clone https://github.com/ltdrdata/ComfyUI-Impact-Pack && pip install -r ComfyUI-Impact-Pack/requirements.txt && python3 ComfyUI-Impact-Pack/install.py && \
-git clone https://github.com/cdb-boop/ComfyUI-Bringing-Old-Photos-Back-to-Life && pip install -r ComfyUI-Bringing-Old-Photos-Back-to-Life/requirements.txt &&\
-git clone https://github.com/Gourieff/comfyui-reactor-node && pip install -r comfyui-reactor-node/requirements.txt &&\
-git clone https://github.com/cubiq/ComfyUI_InstantID && pip install -r ComfyUI_InstantID/requirements.txt &&\
-git clone https://github.com/WASasquatch/was-node-suite-comfyui && pip install -r was-node-suite-comfyui/requirements.txt &&\
-pip install ultralytics
-
-#Download custom files
-# RUN wget -O ${ROOT}/models/checkpoints/realvisxlV40_v40LightningBakedvae.safetensors https://huggingface.co/alexgenovese/reica_models/resolve/021e192bd744c48a85f8ae1832662e77beb9aac7/realvisxlV40_v40LightningBakedvae.safetensors
-# RUN wget -O ${ROOT}/models/insightface/inswapper_128.onnx https://huggingface.co/ezioruan/inswapper_128.onnx/resolve/main/inswapper_128.onnx
-# RUN wget -O ${ROOT}/models/upscale_models/RealESRGAN_x2.pth https://huggingface.co/ai-forever/Real-ESRGAN/resolve/a86fc6182b4650b4459cb1ddcb0a0d1ec86bf3b0/RealESRGAN_x2.pth
-# RUN wget -O ${ROOT}/models/instantid/SDXL/ip-adapter.bin https://huggingface.co/InstantX/InstantID/resolve/main/ip-adapter.bin
-# RUN wget -O ${ROOT}/models/controlnet/instantid/diffusion_pytorch_model.safetensors https://huggingface.co/InstantX/InstantID/resolve/main/ControlNetModel/diffusion_pytorch_model.safetensors
-# RUN wget -O ${ROOT}/models/insightface/models/antelopev2.zip https://github.com/deepinsight/insightface/releases/download/v0.7/antelopev2.zip && unzip ${ROOT}/models/insightface/models/antelopev2.zip
 # Support for the network volume
 ADD src/extra_model_paths.yaml ./
 ADD data/models/. ${ROOT}/models
@@ -64,8 +48,11 @@ ADD data/models/. ${ROOT}/models
 WORKDIR /
 
 # Add the start and the handler
-ADD src/start.sh src/rp_handler.py ./
+ADD src/start.sh src/rp_handler.py src/install.py ./
 RUN chmod +x /start.sh
+
+# RUN cd /content/comfyui/custom_nodes
+# RUN python ./install.py
 
 # Stage 2: Download models
 FROM base as downloader
@@ -75,7 +62,6 @@ ARG MODEL_TYPE
 
 # Change working directory to ComfyUI
 WORKDIR /comfyui
-
 
 # Stage 3: Final image
 FROM base as final
