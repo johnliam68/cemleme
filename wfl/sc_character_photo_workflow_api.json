@@ -91,18 +91,6 @@
       "title": "VAE Decode"
     }
   },
-  "10": {
-    "inputs": {
-      "images": [
-        "8",
-        0
-      ]
-    },
-    "class_type": "PreviewImage",
-    "_meta": {
-      "title": "Preview Image"
-    }
-  },
   "11": {
     "inputs": {
       "weight": 1,
