@@ -1,4 +1,37 @@
-{
+import requests
+import json
+import base64
+import time
+from pathlib import Path
+
+# Your RunPod API key and endpoint ID
+API_KEY = "IUOCCCBSF439C7Z6WTK58MZ7FZZCA9K82C92L5L7"
+ENDPOINT_ID = "sxsp9j5ubnt4rs"
+
+# Base URL for the API
+BASE_URL = f"https://api.runpod.ai/v2/{ENDPOINT_ID}"
+
+# Headers for the API requests
+headers = {
+    'Content-Type': 'application/json',
+    'Authorization': f'Bearer {API_KEY}'
+}
+
+# Function to encode the image
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
+
+# Path to your image
+IMAGE_PATH = Path(r"67027377d927d521fa6e080e_photo_rotated.webp")
+
+# Encode the image
+base64_image = encode_image(IMAGE_PATH)
+
+# Prepare the input for the job
+input_data = {
+        "input": {
+            "workflow": {
   "3": {
     "inputs": {
       "seed": 601879184058100,
@@ -202,4 +235,60 @@
       "title": "Load LoRA"
     }
   }
-}
+},
+            "images": [
+                {
+                    "name": "67027377d927d521fa6e080e_photo_rotated.webp",
+                    "image": base64_image  # The base64 encoded image will be inserted here dynamically
+                }
+            ]
+        }
+    }
+
+# Start the job
+response = requests.post(f"{BASE_URL}/run", headers=headers, json=input_data)
+if response.status_code == 200:
+    job_id = response.json()['id']
+    print(f"Job started with ID: {job_id}")
+else:
+    print(f"Failed to start job. Status code: {response.status_code}")
+    print(f"Response: {response.text}")
+    exit(1)
+
+# Check job status
+while True:
+    status_response = requests.get(f"{BASE_URL}/status/{job_id}", headers=headers)
+    if status_response.status_code == 200:
+        status_data = status_response.json()
+        if status_data['status'] == 'COMPLETED':
+            print("Job completed!")
+            break
+        elif status_data['status'] in ['FAILED', 'CANCELLED']:
+            print(f"Job failed or was cancelled. Status: {status_data['status']}")
+            exit(1)
+        else:
+            print(f"Job status: {status_data['status']}. Waiting...")
+            time.sleep(10)  # Wait for 10 seconds before checking again
+    else:
+        print(f"Failed to get job status. Status code: {status_response.status_code}")
+        print(f"Response: {status_response.text}")
+        exit(1)
+
+# Get the results
+output_response = requests.get(f"{BASE_URL}/status/{job_id}", headers=headers)
+if output_response.status_code == 200:
+    output_data = output_response.json()
+    if 'output' in output_data and output_data['output']:
+        output_image_base64 = output_data['output']['message']
+        
+        # Decode and save the image
+        output_image_data = base64.b64decode(output_image_base64)
+        output_path = Path(r"output_image.jpg")
+        with open(output_path, 'wb') as f:
+            f.write(output_image_data)
+        print(f"Image saved successfully to {output_path}")
+    else:
+        print("No output data found in the response")
+else:
+    print(f"Failed to get job output. Status code: {output_response.status_code}")
+    print(f"Response: {output_response.text}")

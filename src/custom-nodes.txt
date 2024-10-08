@@ -1,1 +1,0 @@
-!git clone https://github.com/ltdrdata/ComfyUI-Manager && pip install -r ComfyUI-Manager/requirements.txt

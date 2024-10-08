@@ -1,0 +1,3 @@
+!git clone https://github.com/ltdrdata/ComfyUI-Manager && pip install -r ComfyUI-Manager/requirements.txt
+!git clone https://github.com/cubiq/ComfyUI_InstantID && pip install -r ComfyUI_InstantID/requirements.txt
+!pip install insightface==0.7.3

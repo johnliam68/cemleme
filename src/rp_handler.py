@@ -1,5 +1,6 @@
 import runpod
 from runpod.serverless.utils import rp_upload
+from runpod.serverless.modules.rp_logger import RunPodLogger
 import json
 import urllib.request
 import urllib.parse
@@ -23,6 +24,30 @@ COMFY_HOST = "127.0.0.1:8188"
 # see https://docs.runpod.io/docs/handler-additional-controls#refresh-worker
 REFRESH_WORKER = os.environ.get("REFRESH_WORKER", "false").lower() == "true"
 
+logger = RunPodLogger()
+
+def download(job):
+    source_url = job['input']['payload']['source_url']
+    download_path = job['input']['payload']['download_path']
+    process_id = os.getpid()
+    temp_path = f"{download_path}.{process_id}"
+
+    # Download the file and save it as a temporary file
+    with requests.get(source_url, stream=True) as r:
+        r.raise_for_status()
+        with open(temp_path, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+
+    # Rename the temporary file to the actual file name
+    os.rename(temp_path, download_path)
+    logger.info(f'{source_url} successfully downloaded to {download_path}', job['id'])
+
+    return {
+        'msg': 'Download successful',
+        'source_url': source_url,
+        'download_path': download_path
+    }
 
 def validate_input(job_input):
     """
@@ -287,6 +312,13 @@ def handler(job):
         dict: A dictionary containing either an error message or a success status with generated images.
     """
     job_input = job["input"]
+
+    # Check if this is a download job
+    if "payload" in job_input and "source_url" in job_input["payload"]:
+        try:
+            return download(job)
+        except Exception as e:
+            return {"error": f"Download failed: {str(e)}"}
 
     # Make sure that the input is valid
     validated_data, error_message = validate_input(job_input)

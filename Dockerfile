@@ -8,8 +8,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PIP_PREFER_BINARY=1
 # Ensures output from python is printed immediately to the terminal without buffering
 ENV PYTHONUNBUFFERED=1 
-ENV GIT_CUSTOM_NODES="https://raw.githubusercontent.com/johnliam68/cemleme/refs/heads/main/src/custom-nodes.txt"
-ENV GIT_MODELS="" 
+# ENV GIT_CUSTOM_NODES="https://raw.githubusercontent.com/johnliam68/cemleme/refs/heads/main/src/custom-nodes.txt"
+ENV GIT_CUSTOM_NODES=""
+ENV GIT_MODELS=""
 
 RUN apt-get update && apt-get install -y git && apt-get clean && apt-get install git-lfs && git lfs install
 
@@ -21,11 +22,6 @@ RUN apt-get update && apt-get install -y \
     wget \
     unzip
 
-#Install for dlib
-RUN pip install easydict matplotlib opencv-python scikit-image scipy && pip install cmake && pip install dlib==19.24.1
-
-#Install jupyterlab
-RUN pip install jupyterlab
 # Install runpod
 RUN pip3 install runpod requests
 
@@ -33,6 +29,7 @@ RUN pip3 install runpod requests
 RUN apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 ENV ROOT=/comfyui
+
 RUN --mount=type=cache,target=/root/.cache/pip \
   git clone https://github.com/comfyanonymous/ComfyUI.git ${ROOT} && \
   cd ${ROOT} && \
@@ -41,7 +38,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
   pip install -r requirements.txt
 
 # Support for the network volume
-ADD src/extra_model_paths.yaml ./
+ADD src/extra_model_paths.yaml ${ROOT}/
 ADD data/models/. ${ROOT}/models
 
 # Go back to the root
@@ -49,10 +46,11 @@ WORKDIR /
 
 # Add the start and the handler
 ADD src/start.sh src/rp_handler.py src/install.py ./
+ADD lib/custom-nodes.txt lib/models.txt ${ROOT}/lib/
 RUN chmod +x /start.sh
 
 # RUN cd /content/comfyui/custom_nodes
-# RUN python ./install.py
+RUN python3 /install.py 
 
 # Stage 2: Download models
 FROM base as downloader

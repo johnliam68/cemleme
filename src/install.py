@@ -1,26 +1,3 @@
-# import requests
-# import subprocess
-# import os
-# import string
-
-# os.chdir('/comfyui')
-
-# url = "https://raw.githubusercontent.com/johnliam68/cemleme/refs/heads/main/src/custom-nodes.txt"
-# response = requests.get(url)
-# commands = response.text.split('\n')
-# command = string.replace("pip install -r ", "pip install -r custom_nodes/")
-# for command in commands:
-#     if command.strip():        
-#         command = command.lstrip('!')
-#         try:            
-#             result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
-#             print(f"Command executed successfully: {command}")
-#             print(result.stdout)
-#         except subprocess.CalledProcessError as e:
-#             print(f"Error executing command: {command}")
-#             print(f"Error message: {e.stderr}")
-
-
 import requests
 import subprocess
 import os
@@ -40,34 +17,21 @@ def get_commands():
     else:
         # Đọc từ file local
         try:
-            with open('custom-nodes.txt', 'r') as file:
+            with open('/comfyui/lib/custom-nodes.txt', 'r') as file:
                 return file.read().splitlines()
         except FileNotFoundError:
             print("custom-nodes.txt not found")
             return []
 
 def main():
-    os.chdir('/comfyui')
-    
-    commands = get_commands()
-    
+    os.chdir('/comfyui/custom_nodes')    
+    commands = get_commands()    
     for command in commands:
         if command.strip():
-            # Loại bỏ '!' ở đầu nếu có
-            command = command.lstrip('!')
-            
-            # Thay thế 'pip install -r ' thành 'pip install -r custom_nodes/'
-            if 'pip install -r ' in command:
-                command = command.replace('pip install -r ', 'pip install -r custom_nodes/')
-            
-            try:
-                print(f"Executing command: {command}")
-                result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
-                print(f"Command executed successfully")
-                print(result.stdout)
-            except subprocess.CalledProcessError as e:
-                print(f"Error executing command")
-                print(f"Error message: {e.stderr}")
-
+            command = command.lstrip('!')           
+            print(f"Executing command: {command}")
+            result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
+            print(f"Command executed successfully")
+            print(result.stdout)
 if __name__ == "__main__":
     main()
