@@ -1,0 +1,11 @@
+{
+  "delayTime": 1076,
+  "executionTime": 19194,
+  "id": "sync-64979618-81ed-49e3-b33d-fbd6e8b523f1-e1",
+  "output": {
+    "message": "the image does not exist in the specified output folder: /comfyui/output/ComfyUI_temp_pxfms_00001_.png",
+    "status": "error"
+  },
+  "status": "COMPLETED",
+  "workerId": "tpuu4dmb9btkuv"
+}

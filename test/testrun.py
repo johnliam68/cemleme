@@ -6,7 +6,7 @@ from pathlib import Path
 
 # Your RunPod API key and endpoint ID
 API_KEY = "IUOCCCBSF439C7Z6WTK58MZ7FZZCA9K82C92L5L7"
-ENDPOINT_ID = "sxsp9j5ubnt4rs"
+ENDPOINT_ID = "ik6194588rn8pj"
 
 # Base URL for the API
 BASE_URL = f"https://api.runpod.ai/v2/{ENDPOINT_ID}"
@@ -34,7 +34,7 @@ input_data = {
             "workflow": {
   "3": {
     "inputs": {
-      "seed": 601879184058100,
+      "seed": 601860059563177,
       "steps": 6,
       "cfg": 2,
       "sampler_name": "dpmpp_sde",
@@ -122,18 +122,6 @@ input_data = {
     "class_type": "VAEDecode",
     "_meta": {
       "title": "VAE Decode"
-    }
-  },
-  "10": {
-    "inputs": {
-      "images": [
-        "8",
-        0
-      ]
-    },
-    "class_type": "PreviewImage",
-    "_meta": {
-      "title": "Preview Image"
     }
   },
   "11": {
@@ -234,6 +222,19 @@ input_data = {
     "_meta": {
       "title": "Load LoRA"
     }
+  },
+  "17": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
   }
 },
             "images": [
@@ -246,7 +247,7 @@ input_data = {
     }
 
 # Start the job
-response = requests.post(f"{BASE_URL}/run", headers=headers, json=input_data)
+response = requests.post(f"{BASE_URL}/runsync", headers=headers, json=input_data)
 if response.status_code == 200:
     job_id = response.json()['id']
     print(f"Job started with ID: {job_id}")
@@ -277,7 +278,8 @@ while True:
 # Get the results
 output_response = requests.get(f"{BASE_URL}/status/{job_id}", headers=headers)
 if output_response.status_code == 200:
-    output_data = output_response.json()
+    output_data = output_response.json()       
+
     if 'output' in output_data and output_data['output']:
         output_image_base64 = output_data['output']['message']
         
@@ -291,4 +293,4 @@ if output_response.status_code == 200:
         print("No output data found in the response")
 else:
     print(f"Failed to get job output. Status code: {output_response.status_code}")
-    print(f"Response: {output_response.text}")
+    # print(f"Response: {output_response.text}")
