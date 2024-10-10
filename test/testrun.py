@@ -6,7 +6,7 @@ from pathlib import Path
 
 # Your RunPod API key and endpoint ID
 API_KEY = "IUOCCCBSF439C7Z6WTK58MZ7FZZCA9K82C92L5L7"
-ENDPOINT_ID = "ik6194588rn8pj"
+ENDPOINT_ID = "rtcnccb2vrvec4"
 
 # Base URL for the API
 BASE_URL = f"https://api.runpod.ai/v2/{ENDPOINT_ID}"
