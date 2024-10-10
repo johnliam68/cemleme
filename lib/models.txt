@@ -1,0 +1,12 @@
+[models/checkpoints]
+https://huggingface.co/erohinem/SDXL/resolve/bb3b7fa6598742f81f3eae359fe39165ba29e6dd/juggernautXL_v9Rdphoto2Lightning.safetensors
+[models/controlnet/instantid]
+https://huggingface.co/InstantX/InstantID/resolve/main/ControlNetModel/diffusion_pytorch_model.safetensors
+[models/insightface]
+https://huggingface.co/ezioruan/inswapper_128.onnx/resolve/main/inswapper_128.onnx
+[models/insightface/models]
+https://huggingface.co/MonsterMMORPG/tools/resolve/main/antelopev2.zip
+[models/instantid]
+https://huggingface.co/InstantX/InstantID/resolve/main/ip-adapter.bin
+[models/instantid/SDXL]
+https://huggingface.co/InstantX/InstantID/resolve/main/ip-adapter.bin

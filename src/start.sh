@@ -3,9 +3,6 @@
 TCMALLOC="$(ldconfig -p | grep -Po "libtcmalloc.so.\d" | head -n 1)"
 export LD_PRELOAD="${TCMALLOC}"
 
-# echo ">> Install custom nodes >>"
-# python3 /install.py 
-
 echo ">> Starting Jupyter Lab... >>"
 jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.notebook_dir='/' --NotebookApp.disable_check_xsrf=True --NotebookApp.allow_origin='*' &
 

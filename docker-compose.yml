@@ -21,6 +21,7 @@ services:
   runpod-worker-comfy: &runpod-worker-comfy
     <<: *base_service
     profiles: ["runpod-worker-comfy"]
+    platform: linux/amd64
     build: ./
     image: johnliam/runpod-worker-comfy:cemleme
     environment:      

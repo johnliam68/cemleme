@@ -6,7 +6,7 @@ from pathlib import Path
 
 # Your RunPod API key and endpoint ID
 API_KEY = "IUOCCCBSF439C7Z6WTK58MZ7FZZCA9K82C92L5L7"
-ENDPOINT_ID = "ik6194588rn8pj"
+ENDPOINT_ID = "b7ya77u6xsqrm2"
 
 # Base URL for the API
 BASE_URL = f"https://api.runpod.ai/v2/{ENDPOINT_ID}"
@@ -34,7 +34,7 @@ input_data = {
             "workflow": {
   "3": {
     "inputs": {
-      "seed": 601860059563177,
+      "seed": 601860059563188,
       "steps": 6,
       "cfg": 2,
       "sampler_name": "dpmpp_sde",
